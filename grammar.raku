@@ -1,3 +1,8 @@
+
+grammar aDSL_comp is aDSL {
+
+}
+
 grammar aDSL  {
 
   #000000
@@ -26,32 +31,18 @@ grammar aDSL  {
   token _int8 { 'int8' }
   token _int16 { 'int16' }
   
-  token operator { 
-
-    <_add>| 
-    <_sub>| 
-    <_mul>| 
-    <_div>| 
-    <_mod>| 
-    <_xor>| 
-    <_and>| 
-    <_or>
-
-  }
-
-
-  token _asign { '=' }
-
-  token _add { '+' }
-  token _sub { '-' }
-
-  token _mul { '*' }
-  token _div { '/' }
-  token _mod { '%' }
-
-  token _xor { '^' }
-  token _and { '&' }
-  token _or { '|' }
+  proto token operator  {*}
+  token operator:sym<=> {<sym>}
+  token operator:sym<+> {<sym>}
+  token operator:sym<-> {<sym>}
+                        {<sym>}
+  token operator:sym<*> {<sym>}
+  token operator:sym</> {<sym>}
+  token operator:sym<%> {<sym>}
+                        {<sym>}
+  token operator:sym<^> {<sym>}
+  token operator:sym<&> {<sym>}
+  token operator:sym<|> {<sym>}
 
 
 
