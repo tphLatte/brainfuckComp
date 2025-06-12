@@ -1,14 +1,14 @@
 grammar Operators {
-  proto token _operator  {*}
-  token _operator:sym<=> {<sym>}
-  token _operator:sym<+> {<sym>}
-  token _operator:sym<-> {<sym>}
-  token _operator:sym<*> {<sym>}
-  token _operator:sym</> {<sym>}
-  token _operator:sym<%> {<sym>}
-  token _operator:sym<^> {<sym>}
-  token _operator:sym<&> {<sym>}
-  token _operator:sym<|> {<sym>}
+  proto token operator  {*}
+  token operator:sym<=> {<sym>}
+  token operator:sym<+> {<sym>}
+  token operator:sym<-> {<sym>}
+  token operator:sym<*> {<sym>}
+  token operator:sym</> {<sym>}
+  token operator:sym<%> {<sym>}
+  token operator:sym<^> {<sym>}
+  token operator:sym<&> {<sym>}
+  token operator:sym<|> {<sym>}
 }
 grammar Numbers {
   token _number { <[+-]>? \d+ }
@@ -25,7 +25,7 @@ grammar aDSL is Operators is Numbers {
   token _function {
     <_function_definition> '{' <ws> <_var_definition> ';' <ws> '}'
   } 
-  token _expression { <_var_name> \s* <_operator> \s* <_var_name>   }
+  token _expression { <_var_name> \s* <operator> \s* <_var_name>   }
 
   token _function_definition {
     "func" \s+ <_var_name> \s* "(" \s* <_func_arg_list> \s* ")" \s* ":" \s* <_type>
