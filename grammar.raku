@@ -32,20 +32,22 @@ grammar aDSL is Operators is Numbers {
     
   }
 
-  token _func_arg_list {
-  <_var_definition> [ \s* ',' \s* <_var_definition> ]*
-  }
+  token _func_arg_list { <_var_definition> [ \s* ',' \s* <_var_definition> ]* }
 
-  token _var_definition { 
-    <_var_name> \s* ':' \s* <_type> 
-  }
+  proto token reserved {*}
+  token reserved:sym<do> {<sym>}
+  token reserved:sym<while> {<sym>}
+  token reserved:sym<if> {<sym>}
+  token reserved:sym<else> {<sym>}
+  token reserved:sym<print> {<sym>}
+  token reserved:sym<printc> {<sym>}
+
+  token _var_definition { <_var_name> \s* ':' \s* <_type> }
 
   token _var_name { \w+ }
   token _type  {  <_basic_type> | <_array> }
 
-  token _array   { 
-      Array'[' <_basic_type> ']'
-  }
+  token _array   { Array'[' <_basic_type> ']' }
 
   proto token _basic_type {*} 
   token _basic_type:sym<Int8> { <sym> }
