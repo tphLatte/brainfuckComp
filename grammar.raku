@@ -1,3 +1,4 @@
+
 grammar Operators {
   proto token operator  {*}
   token operator:sym<=> {<sym>}
@@ -11,28 +12,22 @@ grammar Operators {
   token operator:sym<|> {<sym>}
 }
 grammar Numbers {
-  token _number { <[+-]>? \d+ }
+  token number { <[+-]>? \d+ }
+}
+grammar Strings{
+  token string  {\'.*\'} 
+  token char {\'.\' }
 }
 
-
-grammar aDSL is Operators is Numbers {
+grammar aDSL is Operators is Numbers is Strings {
 
   #000000
-  token TOP {
-    <_var_definition>
-  }
+  token TOP { <var_assignment> }
 
-  token _function {
-    <_function_definition> '{' <ws> <_var_definition> ';' <ws> '}'
-  } 
-  token _expression { <_var_name> \s* <operator> \s* <_var_name>   }
-
-  token _function_definition {
-    "func" \s+ <_var_name> \s* "(" \s* <_func_arg_list> \s* ")" \s* ":" \s* <_type>
-    
-  }
-
-  token _func_arg_list { <_var_definition> [ \s* ',' \s* <_var_definition> ]* }
+  token function { <_function_definition> '{' <ws> <var_definition> ';' <ws> '}' } 
+  token _expression { <var_name> \s* <operator> \s* <var_name>   }
+  token _function_definition { "func" \s+ <var_name> \s* <_func_arg_list>  \s* ":" \s* <_type> }
+  token _func_arg_list { "(" \s*  <var_definition> [ \s* ',' \s* <_var_definition> ]*  \s* ")" }
 
   proto token reserved {*}
   token reserved:sym<do> {<sym>}
@@ -42,18 +37,32 @@ grammar aDSL is Operators is Numbers {
   token reserved:sym<print> {<sym>}
   token reserved:sym<printc> {<sym>}
 
-  token _var_definition { <_var_name> \s* ':' \s* <_type> }
+  token var_assignment { 
+    <var_name> <ws> '=' <ws> <value> <ws> ';' | <var_definition>  <ws>'=' <ws> <value> <ws> ';'
+  }
 
-  token _var_name { \w+ }
-  token _type  {  <_basic_type> | <_array> }
+  token value { <number> | <char> | <string> | <var_name> }
+  token var_definition { <var_name> \s* ':' \s* <_type> }
+  token var_name { \w+ }
+  token _type  {  <basic_type> | <_array> }
+  token _array   { Array'[' <basic_type> ']' }
+  proto token basic_type {*} 
+  token basic_type:sym<Int8> { <sym> }
 
-  token _array   { Array'[' <_basic_type> ']' }
+}
 
-  proto token _basic_type {*} 
-  token _basic_type:sym<Int8> { <sym> }
+class aDSL_actions {
+  method type($/){
+    make $/;
+  }
 
-  #token _int16 { 'int16' }
+  method var_definition($/){
+    make($/<_type>.made);
+  }
 
+  method TOP($/){
+    self.var_definition($/);
+  }
 
 }
 
@@ -72,6 +81,7 @@ $s = 'a + b';
 $s = 'Int8 a';
 $s = 'Array[Int8]';
 $s = 'func help(a: Int8, b:Int8):Int8 { c : Int8; }';
-$s = 'a:Int8';
+$s = 'a:Int8 = 1;';
 my $m = aDSL.parse($s);
+#my $m = aDSL.parse($s, actions => aDSL_actions.new);
 say $m;
